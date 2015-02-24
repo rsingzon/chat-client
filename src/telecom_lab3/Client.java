@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Lab3 { 
+public class Client { 
 	
 	public static void main(String args[]){		
 	

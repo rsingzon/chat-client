@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Connection {
+public class ChatConnection {
 
 	int port;
 	String ip;
@@ -30,7 +30,7 @@ public class Connection {
 	 * @param i
 	 * @param p
 	 */
-	public Connection(String i, int p){
+	public ChatConnection(String i, int p){
 		this.port = p;
 		this.ip = i;
 		try{
