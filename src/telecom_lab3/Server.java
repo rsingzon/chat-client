@@ -23,7 +23,7 @@ public class Server {
 			int serverPort = 8080;
 			ServerSocket listenSocket = new ServerSocket(serverPort);
 
-			System.out.println("server start listening... ... ...");
+			System.out.println("Server listening...");
 
 			while (true) {
 				Socket clientSocket = listenSocket.accept();
@@ -61,6 +61,24 @@ class Connection extends Thread {
 	public void run() {
 
 		try {
+			
+			 //Step 1 read number of bytes
+			  int nb = input.readInt();
+			  System.out.println("Read Length: "+ nb);
+			  
+			  //Step 2 read byte
+			  System.out.println("Writing....");
+			   
+			  byte[] readBuf = new byte[1000];
+			  int bytesReceived = 0;
+			  int bytes = 0;
+			  while(bytesReceived<nb){
+				  bytes = input.read(readBuf);
+				  System.out.println(new String(readBuf));
+				  bytesReceived += bytes;
+			  }
+			  
+			  System.out.println("Sent Confirmation");
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

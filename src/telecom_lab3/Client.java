@@ -23,20 +23,53 @@ public class Client {
 	
 	public static void main(String args[]){		
 	
+		boolean loggedIn = false;
+		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
 		while(true){
-			System.out.println("Enter a command");
-			String command = null;
+			String username = null;
+			String password = null;
+			String ip = "142.157.73.54";
+			//String ip = "69.165.215.200";
+			int port = 8080;
 			
-			try{
-				command = reader.readLine();
-				parseCommand(command);
-				System.out.println("You entered: "+command);
-			} 
-			
-			catch (IOException e){
-				e.printStackTrace();
+			// If logged out, prompt the user for username and password
+			if(!loggedIn){
+				try{
+					System.out.println("Username");
+					username = reader.readLine();
+					System.out.println("Password");
+					password = reader.readLine();
+				} catch (IOException e){
+					e.printStackTrace();
+				}
+				
+				// Create a user object
+				User user = new User(username, password, ip, port);
+				
+				
+				/*
+				 * Workflow: 
+				 * 1. Create a user object
+				 * 2. The user object will connect to the server
+				 * 3. 
+				 */
+
+			}
+			else{
+				System.out.println("Enter a command");
+				String command = null;
+				
+				try{
+					command = reader.readLine();
+					parseCommand(command);
+					System.out.println("You entered: "+command);
+				} 
+				
+				catch (IOException e){
+					e.printStackTrace();
+				}
 			}
 		}
 	}
