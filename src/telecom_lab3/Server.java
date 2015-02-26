@@ -11,11 +11,11 @@ package telecom_lab3;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Server {
 	public static void main(String args[]) {
@@ -61,24 +61,40 @@ class Connection extends Thread {
 	public void run() {
 
 		try {
-			
-			 //Step 1 read number of bytes
-			  int nb = input.readInt();
-			  System.out.println("Read Length: "+ nb);
+			  // Step 1: Read the number of bytes received
+			  int numBytes = input.readInt();
+			  System.out.println("Read Length: "+ numBytes);
 			  
-			  //Step 2 read byte
-			  System.out.println("Writing....");
+			  // Step 2: Read the message
+			  System.out.println("Reading...");
 			   
 			  byte[] readBuf = new byte[1000];
 			  int bytesReceived = 0;
 			  int bytes = 0;
-			  while(bytesReceived<nb){
+			  while(bytesReceived < numBytes){
 				  bytes = input.read(readBuf);
-				  System.out.println(new String(readBuf));
+				  //System.out.println(new String(readBuf));
 				  bytesReceived += bytes;
 			  }
 			  
-			  System.out.println("Sent Confirmation");
+			  // Extract the message from the byte array
+			  byte[] typeBytes = Arrays.copyOfRange(readBuf, 0, 4);
+			  byte[] submessageTypeBytes = Arrays.copyOfRange(readBuf, 4, 8);
+			  byte[] sizeBytes = Arrays.copyOfRange(readBuf, 8, 12);
+			  
+			  int messageType = ByteBuffer.wrap(typeBytes).getInt();
+			  int submessageType = ByteBuffer.wrap(submessageTypeBytes).getInt();
+			  int dataSize = ByteBuffer.wrap(sizeBytes).getInt();
+			  
+			  byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12+dataSize);
+			  String data = new String(dataBytes);
+			  
+			  System.out.println("Message Type: "+messageType);
+			  System.out.println("Submessage Type: "+submessageType);
+			  System.out.println("Data size: "+dataSize);
+			  System.out.println("Data: "+data);
+			  
+			  System.out.println("Message received");
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

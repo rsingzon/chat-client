@@ -30,7 +30,8 @@ public class Client {
 		while(true){
 			String username = null;
 			String password = null;
-			String ip = "142.157.73.54";
+			String ip = "142.157.73.44";
+			//String ip = "127.0.0.1";
 			//String ip = "69.165.215.200";
 			int port = 8080;
 			
