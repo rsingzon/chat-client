@@ -1,13 +1,11 @@
 package telecom_lab3;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 public class User {
 	private String username;
@@ -56,22 +54,6 @@ public class User {
 		}
 	}
 
-	public void createStore() {
-
-	}
-
-	public void exit() {
-
-	}
-
-	public void login(String username, String password) {
-		String data = username + "," + password;
-		int dataSize = data.getBytes().length;
-
-		Message message = new Message(23, 0, dataSize, data);
-		sendMessage(socket, message);
-	}
-
 	public void sendMessage(Socket socket, Message message) {
 		
 		try{
@@ -88,12 +70,59 @@ public class User {
 			
 		}
 	}
+	
+	public void exit() {
+		Message message = new Message(20, 0, 0, "");
+		sendMessage(socket, message);
+	}
+	
+	public void echo(String echoText) {
+		int size = echoText.getBytes().length;
+		Message message = new Message(22, 0, size, echoText);
+		sendMessage(socket, message);
+	}
 
+	public void login(String username, String password) {
+		String data = username + "," + password;
+		int dataSize = data.getBytes().length;
+
+		Message message = new Message(23, 0, dataSize, data);
+		sendMessage(socket, message);
+	}
+	
+	public void logoff() {
+		Message message = new Message(24, 0, 0, "");
+		sendMessage(socket, message);
+	}
+
+	public void createUser(String username, String password) {
+		String data = username + "," + password;
+		int dataSize = data.getBytes().length;
+		
+		Message message = new Message(25, 0, dataSize, data);
+		sendMessage(socket, message);
+	}
+	
 	public void deleteUser() {
+		Message message = new Message(26, 0, 0, "");
+		sendMessage(socket, message);
+	}
 
+	public void createStore() {
+		Message message = new Message(27, 0, 0, "");
+		sendMessage(socket, message);
+	}
+	
+	public void sendMessageToUser(String destinationUser, String message) {
+		String data = destinationUser + "," + message;
+		int dataSize = data.getBytes().length;
+		
+		Message serverMessage = new Message(28, 0, dataSize, data);
+		sendMessage(socket, serverMessage);
 	}
 
 	public void queryMessages() {
-
+		Message message = new Message(29, 0, 0, "");
+		sendMessage(socket, message);
 	}
 }
