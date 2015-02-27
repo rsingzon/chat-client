@@ -38,4 +38,31 @@ public enum Operation {
     		return 0;
     	}
     }
+    
+    public static Operation getOperation(int typeInt){
+    	switch(typeInt){
+    	case 20:
+    		return EXIT;
+    	case 21:
+    		return BADLY_FORMATTED_MESSAGE;
+    	case 22:
+    		return ECHO;
+    	case 23:
+    		return LOGIN;
+    	case 24:
+    		return LOGOFF;
+    	case 25:
+    		return CREATE_USER;
+    	case 26:
+    		return DELETE_USER;
+    	case 27:
+    		return CREATE_STORE;
+    	case 28:
+    		return SEND_MESSAGE_TO_USER;
+    	case 29:
+    		return QUERY_MESSAGES;
+    	default:
+    		return BADLY_FORMATTED_MESSAGE;
+    	}
+    }
 }

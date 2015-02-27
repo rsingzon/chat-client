@@ -96,58 +96,57 @@ public class Server {
 
 	public static void parseCommand(int messageType, int dataSize, String data) {
 
-		switch (messageType) {
+		Operation operation = Operation.getOperation(messageType);
+		
+		switch (operation) {
 		// Exit
-		case 20:
+		case EXIT:
 
 			// Closes current connection and logs the user out
 			break;
 
 		// Badly formatted message
-		case 21:
+		case BADLY_FORMATTED_MESSAGE:
 
 			break;
 
 		// Echo
-		case 22:
+		case ECHO:
 
 			break;
 
 		// Login
-		case 23:
-
-			// Verify that the message is correctly formatted
-			
-			
+		case LOGIN:
+			login(data);
 			break;
 
 		// Logoff
-		case 24:
+		case LOGOFF:
 
 			break;
 
 		// Create user
-		case 25:
+		case CREATE_USER:
 
 			break;
 
 		// Delete user
-		case 26:
+		case DELETE_USER:
 
 			break;
 
 		// Create store
-		case 27:
+		case CREATE_STORE:
 
 			break;
 
 		// Send message to user
-		case 28:
+		case SEND_MESSAGE_TO_USER:
 
 			break;
 
 		// Query messages
-		case 29:
+		case QUERY_MESSAGES:
 
 			break;
 
@@ -156,5 +155,14 @@ public class Server {
 			break;
 		}
 
+	}
+	
+	public static void login(String data) {
+		
+		// Verify that the message is correctly formatted
+		if(!data.contains(",")) {
+			//Message message = new Message();
+		}
+			
 	}
 }
