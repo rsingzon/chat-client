@@ -16,8 +16,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Hashtable;
 
 public class Server {
+	
+	private Hashtable<String, Connection> connectedUsers;
+	
 	public static void main(String args[]) {
 		try {
 			int serverPort = 8080;
@@ -25,6 +29,7 @@ public class Server {
 
 			System.out.println("Server listening...");
 
+			// Continuously receive messages from connecting clients
 			while (true) {
 				Socket clientSocket = listenSocket.accept();
 				Connection c = new Connection(clientSocket);
@@ -71,9 +76,10 @@ class Connection extends Thread {
 			  byte[] readBuf = new byte[1000];
 			  int bytesReceived = 0;
 			  int bytes = 0;
+			  
+			  // Copy bytes into buffer
 			  while(bytesReceived < numBytes){
 				  bytes = input.read(readBuf);
-				  //System.out.println(new String(readBuf));
 				  bytesReceived += bytes;
 			  }
 			  
@@ -89,12 +95,16 @@ class Connection extends Thread {
 			  byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12+dataSize);
 			  String data = new String(dataBytes);
 			  
+			  // Print message information
 			  System.out.println("Message Type: "+messageType);
 			  System.out.println("Submessage Type: "+submessageType);
 			  System.out.println("Data size: "+dataSize);
 			  System.out.println("Data: "+data);
 			  
-			  System.out.println("Message received");
+			  // Parse the command
+			  parseCommand(messageType, dataSize, data);
+			  
+			  System.out.println("\nMessage received\n");
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -106,5 +116,68 @@ class Connection extends Thread {
 			} catch (IOException e) {/* close failed */
 			}
 		}
+	}
+	
+	public void parseCommand(int messageType, int dataSize, String data) {
+		
+		switch(messageType){
+		// Exit
+		case 20:	
+			
+			// Closes current connection and logs the user out
+			break;
+			
+		// Badly formatted message
+		case 21:
+			
+			break;
+			
+		// Echo
+		case 22:
+			
+			break;
+			
+		// Login
+		case 23:
+			
+			break;
+		
+		// Logoff
+		case 24:
+				
+			break;
+			
+		// Create user
+		case 25:
+			
+			break;
+			
+		// Delete user
+		case 26:
+			
+			break;
+			
+		// Create store
+		case 27:
+	
+			break;
+			
+		// Send message to user
+		case 28:
+			
+			break;
+			
+		// Query messages
+		case 29:
+			
+			break;
+			
+			
+			
+		default:
+			System.out.println("Unrecognized message type" + messageType);
+			break;
+		}
+		
 	}
 }

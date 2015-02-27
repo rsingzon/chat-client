@@ -49,14 +49,6 @@ public class Client {
 				// Create a user object
 				User user = new User(username, password, ip, port);
 				
-				
-				/*
-				 * Workflow: 
-				 * 1. Create a user object
-				 * 2. The user object will connect to the server
-				 * 3. 
-				 */
-
 			}
 			else{
 				System.out.println("Enter a command");
