@@ -22,15 +22,15 @@ import java.net.UnknownHostException;
 
 public class Client { 
 	
-	int port = 5000;
-	boolean loggedIn = false;
+	static int port = 5000;
+	static boolean loggedIn = false;
 	
-	String ip = null;
-	Socket socket = null;
-	User user = null;
-	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	static String ip = null;
+	static Socket socket = null;
+	static User user = null;
+	static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-	public void main(String args[]){		
+	public static void main(String args[]){		
 
 		try{
 			InetAddress address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
@@ -50,13 +50,13 @@ public class Client {
 						System.out.println("Type \"login\" to log in, or \"create\" to create a new user");
 						option = reader.readLine();
 						
-						// No valid option selected
+						// No valid option selected, prompt user for selection again
 						if( !option.toLowerCase().equals("l") 		||
 							!option.toLowerCase().equals("login") 	||
 							!option.toLowerCase().equals("c") 		|| 
 							!option.toLowerCase().equals("create") 	){
 								
-							break;
+							continue;
 						}
 						
 						else {
@@ -125,7 +125,6 @@ public class Client {
 		} catch(UnknownHostException e){
 			System.out.println("Unknown host: " + e.getStackTrace());
 		}
-		
 	}
 	
 	/**
@@ -133,16 +132,58 @@ public class Client {
 	 * @param command
 	 * @return
 	 */
-	private void parseCommand(String command){
+	private static void parseCommand(String command){
 		
 		String commandLowercase = command.toLowerCase();
 		
 		switch(commandLowercase){
+	
+		case "echo":
+			System.out.println("Enter the text you want to echo:");
+			
+			try{
+				String echoText = reader.readLine();
+				user.echo(echoText);
+				
+			} catch(IOException e){
+				e.printStackTrace();
+			}
+			
+			break;
+		
+		case "send":
+			
+			try{
+				System.out.println("Destination username");
+				String destinationUser = reader.readLine();
+				System.out.println("Message");
+				String message = reader.readLine();
+
+				user.sendMessageToUser(destinationUser, message);
+				
+			} catch(IOException e){
+				e.printStackTrace();
+			}
+			
+			break;
+			
+		case "query":
+			user.queryMessages();
+			break;
+			
 		case "exit":
 			user.exit();
+			loggedIn = false;
 			break;
+			
 		default:
 			System.out.println("Unrecognized command: "+command);
+			System.out.println(
+				"Usage: "+
+				"echo : Server returns the same text sent to it"+
+				"send : Send a message to an existing user"+
+				"query: Retrieve messages that have been sent to the user currently logged in"+
+				"exit : Logs off the current user");
 			break;
 		}
 	}
