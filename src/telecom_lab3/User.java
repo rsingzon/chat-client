@@ -18,40 +18,10 @@ public class User {
 	 * @param name
 	 * @param pw
 	 */
-	public User(String name, String pw, String ip, int port) {
+	public User(String name, String pw, Socket s) {
 		this.username = name;
 		this.password = pw;
-
-		try {
-			// Connect to the server
-			socket = new Socket(ip, port);
-
-			// Check if the user exists
-			InetAddress address = InetAddress.getByName("www.google.ca");
-			System.out.println(address.getHostAddress());
-
-			login(username, password);
-
-			// Create a store
-			createStore();
-
-		}
-
-		catch (UnknownHostException e) {
-			System.out.println("Sock:" + e.getMessage());
-		} catch (EOFException e) {
-			System.out.println("EOF:" + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("IO:" + e.getMessage());
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-					// Socket close failed
-				}
-			}
-		}
+		this.socket = s;
 	}
 
 	public void sendMessage(Socket socket, Message message) {
@@ -101,6 +71,9 @@ public class User {
 		
 		Message message = new Message(Operation.getValue(Operation.CREATE_USER), 0, dataSize, data);
 		sendMessage(socket, message);
+		
+		// Create store once per user
+		createStore();
 	}
 	
 	public void deleteUser() {
