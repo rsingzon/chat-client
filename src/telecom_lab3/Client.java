@@ -16,24 +16,29 @@ import java.io.EOFException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client { 
 	
 	public static void main(String args[]){		
-	
+
+		String ip = null;
+		int port = 5000;
 		boolean loggedIn = false;
-		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		try{
+			InetAddress address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch(UnknownHostException e){
+			System.out.println("Unknown host: " + e.getStackTrace());
+		}
 		
 		while(true){
 			String username = null;
 			String password = null;
-			String ip = "142.157.73.44";
-			//String ip = "127.0.0.1";
-			//String ip = "69.165.215.200";
-			int port = 8080;
 			
 			// If logged out, prompt the user for username and password
 			if(!loggedIn){

@@ -72,13 +72,13 @@ public class User {
 	}
 	
 	public void exit() {
-		Message message = new Message(20, 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.EXIT), 0, 0, "");
 		sendMessage(socket, message);
 	}
 	
 	public void echo(String echoText) {
 		int size = echoText.getBytes().length;
-		Message message = new Message(22, 0, size, echoText);
+		Message message = new Message(Operation.getValue(Operation.ECHO), 0, size, echoText);
 		sendMessage(socket, message);
 	}
 
@@ -86,12 +86,12 @@ public class User {
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
 
-		Message message = new Message(23, 0, dataSize, data);
+		Message message = new Message(Operation.getValue(Operation.LOGIN), 0, dataSize, data);
 		sendMessage(socket, message);
 	}
 	
 	public void logoff() {
-		Message message = new Message(24, 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.LOGOFF), 0, 0, "");
 		sendMessage(socket, message);
 	}
 
@@ -99,17 +99,17 @@ public class User {
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
 		
-		Message message = new Message(25, 0, dataSize, data);
+		Message message = new Message(Operation.getValue(Operation.CREATE_USER), 0, dataSize, data);
 		sendMessage(socket, message);
 	}
 	
 	public void deleteUser() {
-		Message message = new Message(26, 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.DELETE_USER), 0, 0, "");
 		sendMessage(socket, message);
 	}
 
 	public void createStore() {
-		Message message = new Message(27, 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.CREATE_STORE), 0, 0, "");
 		sendMessage(socket, message);
 	}
 	
@@ -117,12 +117,12 @@ public class User {
 		String data = destinationUser + "," + message;
 		int dataSize = data.getBytes().length;
 		
-		Message serverMessage = new Message(28, 0, dataSize, data);
+		Message serverMessage = new Message(Operation.getValue(Operation.SEND_MESSAGE_TO_USER), 0, dataSize, data);
 		sendMessage(socket, serverMessage);
 	}
 
 	public void queryMessages() {
-		Message message = new Message(29, 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.QUERY_MESSAGES), 0, 0, "");
 		sendMessage(socket, message);
 	}
 }
