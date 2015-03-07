@@ -19,6 +19,8 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Client { 
 	
@@ -29,7 +31,8 @@ public class Client {
 	static Socket socket = null;
 	static User user = null;
 	static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
+	static DataInputStream input;
+	
 	public static void main(String args[]){		
 
 		try{
@@ -50,12 +53,14 @@ public class Client {
 						System.out.println("Type \"login\" to log in, or \"create\" to create a new user");
 						option = reader.readLine();
 						
+						
 						// No valid option selected, prompt user for selection again
-						if( !option.toLowerCase().equals("l") 		||
-							!option.toLowerCase().equals("login") 	||
-							!option.toLowerCase().equals("c") 		|| 
+						if( !option.toLowerCase().equals("l") 		&&
+							!option.toLowerCase().equals("login") 	&&
+							!option.toLowerCase().equals("c") 		&& 
 							!option.toLowerCase().equals("create") 	){
 								
+							System.out.println(option);
 							continue;
 						}
 						
@@ -83,9 +88,54 @@ public class Client {
 							}
 							
 							// Wait for login success message from server
-							// TODO Retrieve the response message
+							input = new DataInputStream(socket.getInputStream());
+
+							byte[] readBuf = new byte[1000];
+							int bytesReceived = 0;
+							int bytes = 0;
+
+							// Copy bytes into buffer
+							bytes = input.read(readBuf);
 							
-							loggedIn = true;
+							// Extract the response from the byte array
+							// Extract the message from the byte array
+							byte[] typeBytes = Arrays.copyOfRange(readBuf, 0, 4);
+							byte[] submessageTypeBytes = Arrays.copyOfRange(readBuf, 4,	8);
+							byte[] sizeBytes = Arrays.copyOfRange(readBuf, 8, 12);
+
+							int messageType = ByteBuffer.wrap(typeBytes).getInt();
+							int submessageType = ByteBuffer.wrap(submessageTypeBytes).getInt();
+							int dataSize = ByteBuffer.wrap(sizeBytes).getInt();
+
+							//byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12 + dataSize);
+							//String data = new String(dataBytes);
+
+							System.out.println("Response: ");
+							System.out.println("Type: "+ messageType);
+							System.out.println("Submessage: "+submessageType);
+							System.out.println("Size: "+dataSize);
+							//System.out.println("Data: "+data);
+							
+							switch(submessageType){
+							case 0:
+								System.out.println("Logging in..");
+								loggedIn = true;
+								break;
+							case 1:
+								System.out.println("This user is already logged in");
+								break;
+							case 2:
+								System.out.println("Invalid username or password");
+								break;
+							case 3:
+								System.out.println("Missing username or password");
+								break;
+							default:
+								System.out.println("An error occurred");
+							}
+							
+							
+							// TODO: Start a thread to keep track of time and every 1 second, call the user.queryMessages() function
 						}
 					} 
 					

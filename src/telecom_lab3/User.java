@@ -30,8 +30,8 @@ public class User {
 			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
 			// Send length
-			System.out.println("Length" + message.getSize());
-			output.writeInt(message.getSize());
+			//System.out.println("Length: " + message.getSize());
+			//output.writeInt(message.getSize());
 			
 			// Send data
 			System.out.println("Sending...");
