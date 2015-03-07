@@ -141,7 +141,7 @@ public class Client {
 			}
 			
 		} catch(UnknownHostException e){
-			System.out.println("Unknown host: " + e.getStackTrace());
+			System.out.println("Unknown host: " + e.getMessage());
 		}
 	}
 	
@@ -185,12 +185,30 @@ public class Client {
 		case "send":
 			
 			try{
+				// Read the destination username and message from the user
 				System.out.println("Destination username");
 				String destinationUser = reader.readLine();
 				System.out.println("Message");
 				String message = reader.readLine();
 
+				// Send the message to the server
 				user.sendMessageToUser(destinationUser, message);
+				
+				// Wait for a response from the server
+				response = parseResponse();
+				submessageType = response.getSubmessageType();
+				
+				if(submessageType == 0){
+					System.out.println("Message sent successfully!");
+				} else if(submessageType == 1){
+					System.out.println("Destination user does not have a data store created");
+				} else if(submessageType == 2){
+					System.out.println("Destination user does not exist");
+				} else if(submessageType == 3){
+					System.out.println("No users are currently logged in");					
+				} else if(submessageType == 4){
+					System.out.println("Badly formatted message, there are missing fields in the data field");
+				}
 				
 			} catch(IOException e){
 				e.printStackTrace();
@@ -200,10 +218,43 @@ public class Client {
 			
 		case "query":
 			user.queryMessages();
+			
+			response = parseResponse();
+			submessageType = response.getSubmessageType();
+			
+			if(submessageType == 0){
+				System.out.println("You have no outstanding messages in your message store");
+			} else if(submessageType == 1){
+				// TODO: Handle cases when there are multiple outstanding messages
+			}
+			break;
+			
+		case "delete":
+			user.deleteUser();
+			
+			response = parseResponse();
+			submessageType = response.getSubmessageType();
+			
+			if(submessageType == 0){
+				System.out.println("User successfully deleted");
+			} else if(submessageType == 1){
+				System.out.println("You are not currently logged in.  No users have been deleted");
+			}
 			break;
 			
 		case "exit":
 			user.exit();
+			
+			response = parseResponse();
+			submessageType = response.getSubmessageType();
+			if(submessageType == 0){
+				System.out.println("Logout successful!");
+			} else if(submessageType == 1){
+				System.out.println("You are not currently logged in");
+			} else if(submessageType == 2){
+				System.out.println("You have been logged out after 60 seconds due to inactivity");
+			}
+			
 			loggedIn = false;
 			break;
 			
@@ -214,6 +265,7 @@ public class Client {
 				"echo : Server returns the same text sent to it\n"+
 				"send : Send a message to an existing user\n"+
 				"query: Retrieve messages that have been sent to the user currently logged in\n"+
+				"delete: Deletes the user that is currently logged in and logs the user out\n"+
 				"exit : Logs off the current user\n");
 			break;
 		}
