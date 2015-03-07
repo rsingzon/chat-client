@@ -50,6 +50,7 @@ public class Client {
 					try{
 						
 						// Give user the option of logging in or creating a new user
+						System.out.println("\n------------------------------------------------------------");
 						System.out.println("Type \"login\" to log in, or \"create\" to create a new user");
 						option = reader.readLine();
 						
@@ -87,7 +88,8 @@ public class Client {
 								user.createUser(username, password);
 							}
 							
-							int submessageType = parseResponse();
+							Message response = parseResponse();
+							int submessageType = response.getSubmessageType();
 														
 							switch(submessageType){
 							case 0:
@@ -119,15 +121,7 @@ public class Client {
 						System.out.println("EOF:" + e.getMessage());
 					} catch (IOException e) {
 						System.out.println("IO:" + e.getMessage());
-					} finally {
-						if (socket != null) {
-							try {
-								socket.close();
-							} catch (IOException e) {
-								// Socket close failed
-							}
-						}
-					}
+					} 
 				}
 				
 				// User is logged in, wait for them to enter a command
@@ -138,7 +132,6 @@ public class Client {
 					try{
 						command = reader.readLine();
 						parseCommand(command);
-						System.out.println("You entered: "+command);
 					} 
 					
 					catch (IOException e){
@@ -160,16 +153,29 @@ public class Client {
 	private static void parseCommand(String command){
 		
 		String commandLowercase = command.toLowerCase();
+		Message response;
+		int submessageType;
+		String data;
 		
 		switch(commandLowercase){
 	
+		// Sends a string to the server and the server responds with the same string
 		case "echo":
 			System.out.println("Enter the text you want to echo:");
 			
 			try{
+				// Accept input from the user
 				String echoText = reader.readLine();
 				user.echo(echoText);
 				
+				// Wait for the response from the server
+				response = parseResponse();
+				submessageType = response.getSubmessageType();
+
+				if(submessageType == 0){
+					data = response.getDataString();
+					System.out.println("Response from server: \n" + data);
+				}
 			} catch(IOException e){
 				e.printStackTrace();
 			}
@@ -217,7 +223,7 @@ public class Client {
 	 * Parses the response from the server and informs user of status
 	 * @return submessage type
 	 */
-	private static int parseResponse(){
+	private static Message parseResponse(){
 
 		byte[] readBuf = new byte[1000];
 		int bytesReceived = 0;
@@ -249,12 +255,12 @@ public class Client {
 			System.out.println("Submessage: "+submessageType);
 			System.out.println("Size: "+dataSize);
 			System.out.println("Data: "+data);
-			return submessageType;
+			return new Message(messageType, submessageType, dataSize, data);
 			
 		} catch (IOException e){
-			System.out.println("IO Exception on parsing server response. " + e.getStackTrace());
+			System.out.println("IO Exception on parsing server response: " + e.getMessage());
 		}
 
-		return -1;
+		return null;
 	}
 }

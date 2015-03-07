@@ -27,14 +27,9 @@ public class User {
 	public void sendMessage(Socket socket, Message message) {
 		
 		try{
-			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-
-			// Send length
-			//System.out.println("Length: " + message.getSize());
-			//output.writeInt(message.getSize());
-			
-			// Send data
+			// Write message to output stream
 			System.out.println("Sending...");
+			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 			output.writeBytes(new String(message.getBytes())); // UTF is a string encoding	
 		} catch(IOException e){
 			
