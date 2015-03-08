@@ -1,3 +1,7 @@
+/**
+ * User class - defines the functions available for any particular user
+ */
+
 package telecom_lab3;
 
 import java.io.DataOutputStream;
@@ -15,7 +19,6 @@ public class User {
 
 	/**
 	 * Constructor for a single user
-	 * 
 	 * @param name
 	 * @param pw
 	 */
@@ -25,11 +28,15 @@ public class User {
 		this.socket = s;
 	}
 
+	/**
+	 * Sends a formatted message to the server using the socket opened in the client
+	 * @param socket
+	 * @param message
+	 */
 	public void sendMessage(Socket socket, Message message) {
 	
 		try{
 			// Write message to output stream
-			System.out.println("Sending...");
 			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 			output.writeBytes(new String(message.getBytes())); // UTF is a string encoding	
 		} catch(IOException e){
@@ -37,17 +44,29 @@ public class User {
 		}
 	}
 	
+	/**
+	 * Exits the program
+	 */
 	public void exit() {
 		Message message = new Message(Operation.getValue(Operation.EXIT), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 	
+	/**
+	 * Sends a message to the server, and the server will respond with the same message
+	 * @param echoText
+	 */
 	public void echo(String echoText) {
 		int size = echoText.getBytes().length;
 		Message message = new Message(Operation.getValue(Operation.ECHO), 0, size, echoText);
 		sendMessage(socket, message);
 	}
 
+	/**
+	 * Logs a user in
+	 * @param username
+	 * @param password
+	 */
 	public void login(String username, String password) {
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
@@ -56,11 +75,19 @@ public class User {
 		sendMessage(socket, message);
 	}
 	
+	/**
+	 * Logs a user out
+	 */
 	public void logoff() {
 		Message message = new Message(Operation.getValue(Operation.LOGOFF), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 
+	/**
+	 * Creates a new user
+	 * @param username
+	 * @param password
+	 */
 	public void createUser(String username, String password) {
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
@@ -69,17 +96,28 @@ public class User {
 		sendMessage(socket, message);
 	}
 	
+	/**
+	 * Deletes the user that is currently logged in
+	 */
 	public void deleteUser() {
 		Message message = new Message(Operation.getValue(Operation.DELETE_USER), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 
+	/**
+	 * Creates a store for the currently logged in user
+	 */
 	public void createStore() {
 		
 		Message message = new Message(Operation.getValue(Operation.CREATE_STORE), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 	
+	/**
+	 * Sends a message to the specified user
+	 * @param destinationUser
+	 * @param message
+	 */
 	public void sendMessageToUser(String destinationUser, String message) {
 		String data = destinationUser + "," + message;
 		int dataSize = data.getBytes().length;
@@ -88,6 +126,9 @@ public class User {
 		sendMessage(socket, serverMessage);
 	}
 
+	/**
+	 * Queries the server for new messages
+	 */
 	public void queryMessages() {
 		Message message = new Message(Operation.getValue(Operation.QUERY_MESSAGES), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);

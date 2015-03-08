@@ -159,6 +159,7 @@ public class Client {
 								} 
 							}
 							
+							QueryThread query = new QueryThread(user);
 							
 							// TODO: Start a thread to keep track of time and every 1 second, call the user.queryMessages() function
 							
@@ -327,7 +328,7 @@ public class Client {
 	 * Parses the response from the server and informs user of status
 	 * @return submessage type
 	 */
-	private static Message parseResponse(){
+	public static Message parseResponse(){
 
 		byte[] readBuf = new byte[1000];
 		int bytesReceived = 0;
