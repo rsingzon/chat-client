@@ -11,6 +11,7 @@ public class User {
 	private String username;
 	private String password;
 	private Socket socket;
+	private String dummyString = "dummy";
 
 	/**
 	 * Constructor for a single user
@@ -25,19 +26,19 @@ public class User {
 	}
 
 	public void sendMessage(Socket socket, Message message) {
-		
+	
 		try{
 			// Write message to output stream
 			System.out.println("Sending...");
 			DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 			output.writeBytes(new String(message.getBytes())); // UTF is a string encoding	
 		} catch(IOException e){
-			
+			e.printStackTrace();
 		}
 	}
 	
 	public void exit() {
-		Message message = new Message(Operation.getValue(Operation.EXIT), 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.EXIT), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 	
@@ -56,7 +57,7 @@ public class User {
 	}
 	
 	public void logoff() {
-		Message message = new Message(Operation.getValue(Operation.LOGOFF), 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.LOGOFF), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 
@@ -68,16 +69,17 @@ public class User {
 		sendMessage(socket, message);
 		
 		// Create store once per user
-		createStore();
+		//createStore();
 	}
 	
 	public void deleteUser() {
-		Message message = new Message(Operation.getValue(Operation.DELETE_USER), 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.DELETE_USER), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 
 	public void createStore() {
-		Message message = new Message(Operation.getValue(Operation.CREATE_STORE), 0, 0, "");
+		
+		Message message = new Message(Operation.getValue(Operation.CREATE_STORE), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 	
@@ -90,7 +92,7 @@ public class User {
 	}
 
 	public void queryMessages() {
-		Message message = new Message(Operation.getValue(Operation.QUERY_MESSAGES), 0, 0, "");
+		Message message = new Message(Operation.getValue(Operation.QUERY_MESSAGES), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
 	}
 }
