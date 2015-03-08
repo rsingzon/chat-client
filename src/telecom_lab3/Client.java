@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 public class Client { 
 	
-	static int port = 5000;
+	static int port = 5001;
 	static boolean loggedIn = false;
 	
 	static String ip = null;
@@ -80,37 +80,89 @@ public class Client {
 								
 								user = new User(username, password, socket);
 								user.login(username, password);
+								
+								Message response = parseResponse();
+								int submessageType = response.getSubmessageType();
+								String data = response.getDataString();
+								System.out.println(data);
+																						
+								switch(submessageType){
+								case 0:
+									System.out.println("Logging in..");
+									loggedIn = true;
+									break;
+								case 1:
+									System.out.println("This user is already logged in");
+									break;
+								case 2:
+									System.out.println("Invalid username or password");
+									break;
+								case 3:
+									System.out.println("Missing username or password");
+									break;
+								default:
+									System.out.println("An unknown error occurred");
+								}
 							}
 							
 							// Create user
 							else{
 								user = new User(username, password, socket);
 								user.createUser(username, password);
-							}
 							
-							Message response = parseResponse();
-							int submessageType = response.getSubmessageType();
-														
-							switch(submessageType){
-							case 0:
-								System.out.println("Logging in..");
-								loggedIn = true;
-								break;
-							case 1:
-								System.out.println("This user is already logged in");
-								break;
-							case 2:
-								System.out.println("Invalid username or password");
-								break;
-							case 3:
-								System.out.println("Missing username or password");
-								break;
-							default:
-								System.out.println("An unknown error occurred");
+								Message response = parseResponse();
+								int submessageType = response.getSubmessageType();
+								String data = response.getDataString();
+								System.out.println("\n"+data );
+								
+								if(submessageType == 0){
+									System.out.println("Successfully created user");
+								} else if(submessageType == 1){
+									System.out.println("User already exists");
+								} else if(submessageType == 2){
+									System.out.println("User already logged in");
+								} else if(submessageType == 3){
+									System.out.println("Badly formatted request");
+								}
+								
+								user.login(username, password);
+								
+								response = parseResponse();
+								submessageType = response.getSubmessageType();
+								data = response.getDataString();
+								System.out.println("\n"+data);
+								
+								if(submessageType == 0){
+									System.out.println("Successfully logged in");
+									loggedIn = true;
+								} else if(submessageType == 1){
+									System.out.println("User already logged in");
+								} else if(submessageType == 2){
+									System.out.println("Bad credentials");
+								} else if(submessageType == 3){
+									System.out.println("Badly formatted request");
+								}
+								
+								user.createStore();
+								
+								response = parseResponse();
+								submessageType = response.getSubmessageType();
+								data = response.getDataString();
+								System.out.println("\n"+data);
+								
+								if(submessageType == 0){
+									System.out.println("Successfully created store");
+								} else if(submessageType == 1){
+									System.out.println("Store already exists");
+								} else if(submessageType == 2){
+									System.out.println("User not logged in");
+								} 
 							}
 							
 							
 							// TODO: Start a thread to keep track of time and every 1 second, call the user.queryMessages() function
+							
+							
 						}
 					} 
 					

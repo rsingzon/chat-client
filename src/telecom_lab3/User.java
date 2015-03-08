@@ -67,9 +67,6 @@ public class User {
 		
 		Message message = new Message(Operation.getValue(Operation.CREATE_USER), 0, dataSize, data);
 		sendMessage(socket, message);
-		
-		// Create store once per user
-		//createStore();
 	}
 	
 	public void deleteUser() {
