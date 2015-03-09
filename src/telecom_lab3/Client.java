@@ -83,7 +83,7 @@ public class Client {
 								
 								user = new User(username, password, socket);
 
-								// Check if the username is properly formatted
+								// Check if the username is properly formatted and log user in
 								if(user.login()){
 									Message response = user.parseResponse();
 									int submessageType = response.getSubmessageType();
@@ -105,6 +105,8 @@ public class Client {
 										continue;
 									} 
 								}
+								
+								// Username is badly formatted
 								else{
 									continue;
 								}
@@ -113,6 +115,8 @@ public class Client {
 							// Create user
 							else{
 								user = new User(username, password, socket);
+								
+								// Check if username is properly formatted and create user
 								if(user.createUser()){
 							
 									Message response = user.parseResponse();
@@ -131,6 +135,7 @@ public class Client {
 										continue;
 									} 
 									
+									// Log user in
 									user.login();
 									
 									response = user.parseResponse();
@@ -171,6 +176,8 @@ public class Client {
 										continue;
 									}
 								}
+								
+								// Username is badly formatted
 								else{
 									continue;
 								}
@@ -192,7 +199,7 @@ public class Client {
 				
 				// User is logged in, wait for them to enter a command
 				else{
-					System.out.println("Enter a command");
+					System.out.println("\nEnter a command");
 					String command = null;
 					
 					try{
@@ -249,9 +256,9 @@ public class Client {
 			
 			try{
 				// Read the destination username and message from the user
-				System.out.println("Destination username");
+				System.out.println("Destination username:");
 				String destinationUser = reader.readLine();
-				System.out.println("Message");
+				System.out.println("Message:");
 				String message = reader.readLine();
 
 				// Send the message to the server
