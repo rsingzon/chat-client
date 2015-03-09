@@ -88,6 +88,7 @@ public class Client {
 								if(submessageType == 0){
 									System.out.println("Logging in..");
 									loggedIn = true;
+									user.isLoggedIn = true;
 								} else if(submessageType == 1){
 									System.out.println("This user is already logged in");
 									continue;
@@ -304,6 +305,7 @@ public class Client {
 				System.out.println("You have been logged out after 60 seconds due to inactivity");
 			}
 			
+			user.isLoggedIn = false;
 			loggedIn = false;
 			break;
 			

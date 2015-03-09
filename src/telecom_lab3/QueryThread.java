@@ -18,12 +18,11 @@ public class QueryThread extends Thread {
  
     @Override
     public void run() {
-        boolean isRunning = true;
         ArrayList<Message> newMessages = new ArrayList<Message>();
         Message response;
         int submessageType;
         
-        while (isRunning){
+        while (user.isLoggedIn){
         	try{
         		Thread.sleep(1000);
         

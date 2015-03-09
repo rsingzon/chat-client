@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class User {
+	boolean isLoggedIn = false;
 	private String username;
 	private String password;
 	private static Socket socket;
