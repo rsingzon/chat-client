@@ -82,7 +82,7 @@ public class Client {
 							if(option.toLowerCase().equals("l") || option.toLowerCase().equals("login")){
 								
 								user = new User(username, password, socket);
-								user.login(username, password);
+								user.login();
 								
 								Message response = user.parseResponse();
 								int submessageType = response.getSubmessageType();
@@ -108,7 +108,7 @@ public class Client {
 							// Create user
 							else{
 								user = new User(username, password, socket);
-								user.createUser(username, password);
+								user.createUser();
 							
 								Message response = user.parseResponse();
 								int submessageType = response.getSubmessageType();
@@ -126,7 +126,7 @@ public class Client {
 									continue;
 								} 
 								
-								user.login(username, password);
+								user.login();
 								
 								response = user.parseResponse();
 								submessageType = response.getSubmessageType();

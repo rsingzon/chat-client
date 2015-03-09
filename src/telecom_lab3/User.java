@@ -18,7 +18,7 @@ public class User {
 	boolean isLoggedIn = false;
 	private String username;
 	private String password;
-	private static Socket socket;
+	private Socket socket;
 	private String dummyString = "dummy";
 
 	/**
@@ -37,7 +37,7 @@ public class User {
 	 * @param socket
 	 * @param message
 	 */
-	public void sendMessage(Socket socket, Message message) {
+	public void sendMessage(Message message) {
 	
 		try{
 			// Write message to output stream
@@ -53,7 +53,7 @@ public class User {
 	 */
 	public void exit() {
 		Message message = new Message(Operation.getValue(Operation.EXIT), 0, dummyString.length(), dummyString);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class User {
 	public void echo(String echoText) {
 		int size = echoText.getBytes().length;
 		Message message = new Message(Operation.getValue(Operation.ECHO), 0, size, echoText);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 
 	/**
@@ -71,12 +71,12 @@ public class User {
 	 * @param username
 	 * @param password
 	 */
-	public void login(String username, String password) {
+	public void login() {
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
 
 		Message message = new Message(Operation.getValue(Operation.LOGIN), 0, dataSize, data);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class User {
 	 */
 	public void logoff() {
 		Message message = new Message(Operation.getValue(Operation.LOGOFF), 0, dummyString.length(), dummyString);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 
 	/**
@@ -92,12 +92,12 @@ public class User {
 	 * @param username
 	 * @param password
 	 */
-	public void createUser(String username, String password) {
+	public void createUser() {
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
 		
 		Message message = new Message(Operation.getValue(Operation.CREATE_USER), 0, dataSize, data);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class User {
 	 */
 	public void deleteUser() {
 		Message message = new Message(Operation.getValue(Operation.DELETE_USER), 0, dummyString.length(), dummyString);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class User {
 	public void createStore() {
 		
 		Message message = new Message(Operation.getValue(Operation.CREATE_STORE), 0, dummyString.length(), dummyString);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class User {
 		int dataSize = data.getBytes().length;
 		
 		Message serverMessage = new Message(Operation.getValue(Operation.SEND_MESSAGE_TO_USER), 0, dataSize, data);
-		sendMessage(socket, serverMessage);
+		sendMessage(serverMessage);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class User {
 	 */
 	public void queryMessages() {
 		Message message = new Message(Operation.getValue(Operation.QUERY_MESSAGES), 0, dummyString.length(), dummyString);
-		sendMessage(socket, message);
+		sendMessage(message);
 	}
 	
 	/**
