@@ -139,6 +139,22 @@ public class User {
 	}
 	
 	/**
+	 * Takes messages obtained from a user's store and returns a string in a more readable format
+	 * Messages will be in the form:
+	 * from_user,2015-03-09 10:14:03,message
+	 * 
+	 * The output will be of the form:
+	 * [2015-03-09 10:14:03] from_user >> to_user: message 
+	 * @param message
+	 * @return formatted message
+	 */
+	public String formatMessage(String message){
+		//Split the message into three parts, the sender, timestamp, and message string
+		String parts[] = message.split(",", 3);
+		return "[" + parts[1] + "] " + parts[0] + " >> " + username + ": " + parts[2];
+	}
+	
+	/**
 	 * Parses the response from the server and informs user of status
 	 * @return submessage type
 	 */

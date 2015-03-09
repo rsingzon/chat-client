@@ -268,7 +268,7 @@ public class Client {
 			// Get server response
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
-			System.out.println(response.getDataString());
+			System.out.println(user.formatMessage(response.getDataString()));
 			
 			break;
 			

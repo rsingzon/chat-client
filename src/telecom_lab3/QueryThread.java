@@ -36,8 +36,7 @@ public class QueryThread extends Thread {
         		
         		// There are messages available
         		else if(submessageType == 1){
-    				System.out.println("Messages available!");
-    				System.out.println(response.getDataString());
+    				System.out.println(user.formatMessage(response.getDataString()));
     			}
         		
         	} catch(InterruptedException e){
