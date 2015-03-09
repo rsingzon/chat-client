@@ -85,22 +85,18 @@ public class Client {
 								String data = response.getDataString();
 								System.out.println(data);
 																						
-								switch(submessageType){
-								case 0:
+								if(submessageType == 0){
 									System.out.println("Logging in..");
 									loggedIn = true;
-									break;
-								case 1:
+								} else if(submessageType == 1){
 									System.out.println("This user is already logged in");
-									break;
-								case 2:
+									continue;
+								} else if(submessageType == 2){
 									System.out.println("Invalid username or password");
-									break;
-								case 3:
+									continue;
+								} else if(submessageType == 3){
 									System.out.println("Missing username or password");
-									break;
-								default:
-									System.out.println("An unknown error occurred");
+									continue;
 								}
 							}
 							
