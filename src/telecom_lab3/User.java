@@ -141,7 +141,7 @@ public class User {
 	 * Parses the response from the server and informs user of status
 	 * @return submessage type
 	 */
-	public static Message parseResponse(){
+	public Message parseResponse(){
 
 		byte[] readBuf = new byte[1000];
 		int bytesReceived = 0;
@@ -168,11 +168,11 @@ public class User {
 			byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12 + dataSize);
 			String data = new String(dataBytes);
 			
-			System.out.println("Response: ");
-			System.out.println("Type: "+ messageType);
-			System.out.println("Submessage: "+submessageType);
-			System.out.println("Size: "+dataSize);
-			System.out.println("Data: "+data);
+//			System.out.println("Response: ");
+//			System.out.println("Type: "+ messageType);
+//			System.out.println("Submessage: "+submessageType);
+//			System.out.println("Size: "+dataSize);
+//			System.out.println("Data: "+data);
 			return new Message(messageType, submessageType, dataSize, data);
 			
 		} catch (IOException e){

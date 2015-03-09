@@ -31,7 +31,6 @@ public class Client {
 	static Socket socket = null;
 	static User user = null;
 	static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-	static DataInputStream input;
 	
 	public static void main(String args[]){		
 
@@ -121,8 +120,10 @@ public class Client {
 									System.out.println("User already exists");
 								} else if(submessageType == 2){
 									System.out.println("User already logged in");
+									continue;
 								} else if(submessageType == 3){
 									System.out.println("Badly formatted request");
+									continue;
 								}
 								
 								user.login(username, password);
@@ -135,12 +136,17 @@ public class Client {
 								if(submessageType == 0){
 									System.out.println("Successfully logged in");
 									loggedIn = true;
+									QueryThread query = new QueryThread(user);
+									query.run();
 								} else if(submessageType == 1){
 									System.out.println("User already logged in");
+									continue;
 								} else if(submessageType == 2){
 									System.out.println("Bad credentials");
+									continue;
 								} else if(submessageType == 3){
 									System.out.println("Badly formatted request");
+									continue;
 								}
 								
 								user.createStore();
@@ -156,11 +162,8 @@ public class Client {
 									System.out.println("Store already exists");
 								} else if(submessageType == 2){
 									System.out.println("User not logged in");
-								} 
+								}
 							}
-							
-							QueryThread query = new QueryThread(user);
-							query.run();
 						}
 					} 
 					
@@ -189,7 +192,6 @@ public class Client {
 					}
 				}
 			}
-			
 		} catch(UnknownHostException e){
 			System.out.println("Unknown host: " + e.getMessage());
 		}
