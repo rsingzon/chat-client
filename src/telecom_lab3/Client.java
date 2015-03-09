@@ -290,10 +290,13 @@ public class Client {
 			} else if(submessageType == 1){
 				System.out.println("You are not currently logged in.  No users have been deleted");
 			}
+			
+			user.logoff();
+			loggedIn = false;
 			break;
 			
-		case "exit":
-			user.exit();
+		case "logoff":
+			user.logoff();
 			
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
@@ -309,6 +312,18 @@ public class Client {
 			loggedIn = false;
 			break;
 			
+		case "exit":
+			user.exit();
+			try{
+				socket.close();
+			} catch(IOException e){
+				e.printStackTrace();
+			}
+			System.exit(0);
+			
+			
+			break;
+			
 		default:
 			System.out.println("Unrecognized command: "+command);
 			System.out.println(
@@ -317,7 +332,8 @@ public class Client {
 				"send : Send a message to an existing user\n"+
 				"query: Retrieve messages that have been sent to the user currently logged in\n"+
 				"delete: Deletes the user that is currently logged in and logs the user out\n"+
-				"exit : Logs off the current user\n");
+				"logoff: Logs the current user out\n"+
+				"exit : Exits the program\n");
 			break;
 		}
 	}
