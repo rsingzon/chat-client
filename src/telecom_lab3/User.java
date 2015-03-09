@@ -4,17 +4,20 @@
 
 package telecom_lab3;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class User {
 	private String username;
 	private String password;
-	private Socket socket;
+	private static Socket socket;
 	private String dummyString = "dummy";
 
 	/**
@@ -132,5 +135,50 @@ public class User {
 	public void queryMessages() {
 		Message message = new Message(Operation.getValue(Operation.QUERY_MESSAGES), 0, dummyString.length(), dummyString);
 		sendMessage(socket, message);
+	}
+	
+	/**
+	 * Parses the response from the server and informs user of status
+	 * @return submessage type
+	 */
+	public static Message parseResponse(){
+
+		byte[] readBuf = new byte[1000];
+		int bytesReceived = 0;
+		int bytes = 0;
+
+		
+		try{
+			// Wait for login success message from server
+			DataInputStream input = new DataInputStream(socket.getInputStream());
+
+			// Copy bytes into buffer
+			bytes = input.read(readBuf);
+			
+			// Extract the response from the byte array
+			// Extract the message from the byte array
+			byte[] typeBytes = Arrays.copyOfRange(readBuf, 0, 4);
+			byte[] submessageTypeBytes = Arrays.copyOfRange(readBuf, 4,	8);
+			byte[] sizeBytes = Arrays.copyOfRange(readBuf, 8, 12);
+			
+			int messageType = ByteBuffer.wrap(typeBytes).getInt();
+			int submessageType = ByteBuffer.wrap(submessageTypeBytes).getInt();
+			int dataSize = ByteBuffer.wrap(sizeBytes).getInt();
+			
+			byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12 + dataSize);
+			String data = new String(dataBytes);
+			
+			System.out.println("Response: ");
+			System.out.println("Type: "+ messageType);
+			System.out.println("Submessage: "+submessageType);
+			System.out.println("Size: "+dataSize);
+			System.out.println("Data: "+data);
+			return new Message(messageType, submessageType, dataSize, data);
+			
+		} catch (IOException e){
+			System.out.println("IO Exception on parsing server response: " + e.getMessage());
+		}
+
+		return null;
 	}
 }

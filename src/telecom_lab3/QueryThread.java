@@ -14,7 +14,6 @@ public class QueryThread extends Thread {
 	 */
     public QueryThread(User u) {
     	user = u;
-    	this.run();
     }
  
     @Override
@@ -29,7 +28,7 @@ public class QueryThread extends Thread {
         		Thread.sleep(1000);
         
         		user.queryMessages();
-        		response = Client.parseResponse();
+        		response = user.parseResponse();
         		
         		submessageType = response.getSubmessageType();
         		// No messages available

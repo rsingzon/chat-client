@@ -81,7 +81,7 @@ public class Client {
 								user = new User(username, password, socket);
 								user.login(username, password);
 								
-								Message response = parseResponse();
+								Message response = user.parseResponse();
 								int submessageType = response.getSubmessageType();
 								String data = response.getDataString();
 								System.out.println(data);
@@ -110,7 +110,7 @@ public class Client {
 								user = new User(username, password, socket);
 								user.createUser(username, password);
 							
-								Message response = parseResponse();
+								Message response = user.parseResponse();
 								int submessageType = response.getSubmessageType();
 								String data = response.getDataString();
 								System.out.println("\n"+data );
@@ -127,7 +127,7 @@ public class Client {
 								
 								user.login(username, password);
 								
-								response = parseResponse();
+								response = user.parseResponse();
 								submessageType = response.getSubmessageType();
 								data = response.getDataString();
 								System.out.println("\n"+data);
@@ -145,7 +145,7 @@ public class Client {
 								
 								user.createStore();
 								
-								response = parseResponse();
+								response = user.parseResponse();
 								submessageType = response.getSubmessageType();
 								data = response.getDataString();
 								System.out.println("\n"+data);
@@ -160,10 +160,7 @@ public class Client {
 							}
 							
 							QueryThread query = new QueryThread(user);
-							
-							// TODO: Start a thread to keep track of time and every 1 second, call the user.queryMessages() function
-							
-							
+							query.run();
 						}
 					} 
 					
@@ -222,7 +219,7 @@ public class Client {
 				user.echo(echoText);
 				
 				// Wait for the response from the server
-				response = parseResponse();
+				response = user.parseResponse();
 				submessageType = response.getSubmessageType();
 
 				if(submessageType == 0){
@@ -248,7 +245,7 @@ public class Client {
 				user.sendMessageToUser(destinationUser, message);
 				
 				// Wait for a response from the server
-				response = parseResponse();
+				response = user.parseResponse();
 				submessageType = response.getSubmessageType();
 				
 				if(submessageType == 0){
@@ -272,7 +269,7 @@ public class Client {
 		case "query":
 			user.queryMessages();
 			
-			response = parseResponse();
+			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
 			
 			if(submessageType == 0){
@@ -285,7 +282,7 @@ public class Client {
 		case "delete":
 			user.deleteUser();
 			
-			response = parseResponse();
+			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
 			
 			if(submessageType == 0){
@@ -298,7 +295,7 @@ public class Client {
 		case "exit":
 			user.exit();
 			
-			response = parseResponse();
+			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
 			if(submessageType == 0){
 				System.out.println("Logout successful!");
@@ -322,50 +319,5 @@ public class Client {
 				"exit : Logs off the current user\n");
 			break;
 		}
-	}
-	
-	/**
-	 * Parses the response from the server and informs user of status
-	 * @return submessage type
-	 */
-	public static Message parseResponse(){
-
-		byte[] readBuf = new byte[1000];
-		int bytesReceived = 0;
-		int bytes = 0;
-
-		
-		try{
-			// Wait for login success message from server
-			input = new DataInputStream(socket.getInputStream());
-
-			// Copy bytes into buffer
-			bytes = input.read(readBuf);
-			
-			// Extract the response from the byte array
-			// Extract the message from the byte array
-			byte[] typeBytes = Arrays.copyOfRange(readBuf, 0, 4);
-			byte[] submessageTypeBytes = Arrays.copyOfRange(readBuf, 4,	8);
-			byte[] sizeBytes = Arrays.copyOfRange(readBuf, 8, 12);
-			
-			int messageType = ByteBuffer.wrap(typeBytes).getInt();
-			int submessageType = ByteBuffer.wrap(submessageTypeBytes).getInt();
-			int dataSize = ByteBuffer.wrap(sizeBytes).getInt();
-			
-			byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12 + dataSize);
-			String data = new String(dataBytes);
-			
-			System.out.println("Response: ");
-			System.out.println("Type: "+ messageType);
-			System.out.println("Submessage: "+submessageType);
-			System.out.println("Size: "+dataSize);
-			System.out.println("Data: "+data);
-			return new Message(messageType, submessageType, dataSize, data);
-			
-		} catch (IOException e){
-			System.out.println("IO Exception on parsing server response: " + e.getMessage());
-		}
-
-		return null;
 	}
 }
