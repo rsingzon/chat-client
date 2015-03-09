@@ -28,17 +28,12 @@ public class QueryThread extends Thread {
         
         		user.queryMessages();
         		response = user.parseResponse();
-        		
-        		submessageType = response.getSubmessageType();
-        		// No messages available
-        		if(submessageType == 0){
-    			} 
-        		
-        		// There are messages available
-        		else if(submessageType == 1){
-    				System.out.println(user.formatMessage(response.getDataString()));
-    			}
-        		
+
+        		// Continue retrieving messages until there are no more
+        		while(response.getSubmessageType() != 0){
+        			response = user.parseResponse();
+        			System.out.println(user.formatMessage(response.getDataString()));
+        		}
         	} catch(InterruptedException e){
         		System.out.println("Query messages interrupted. " + e.getMessage());
         	}

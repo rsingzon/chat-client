@@ -199,7 +199,7 @@ public class Client {
 				
 				// User is logged in, wait for them to enter a command
 				else{
-					System.out.println("\nEnter a command");
+					System.out.println("\nEnter a command or press enter to list available commands.");
 					String command = null;
 					
 					try{
