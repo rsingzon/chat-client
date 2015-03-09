@@ -53,9 +53,13 @@ public class Client {
 						System.out.println("Type \"login\" to log in, or \"create\" to create a new user");
 						option = reader.readLine();
 						
+						if(option.toLowerCase().equals("exit")  || option.toLowerCase().equals("quit")){
+							System.exit(0);
+						}
 						
 						// No valid option selected, prompt user for selection again
-						if( !option.toLowerCase().equals("l") 		&&
+						else if( 
+							!option.toLowerCase().equals("l") 		&&
 							!option.toLowerCase().equals("login") 	&&
 							!option.toLowerCase().equals("c") 		&& 
 							!option.toLowerCase().equals("create") 	){
@@ -84,21 +88,21 @@ public class Client {
 								int submessageType = response.getSubmessageType();
 								String data = response.getDataString();
 								System.out.println(data);
-																						
+
+								// Successful login
 								if(submessageType == 0){
-									System.out.println("Logging in..");
 									loggedIn = true;
 									user.isLoggedIn = true;
-								} else if(submessageType == 1){
-									System.out.println("This user is already logged in");
+								} 
+								
+								// User is already logged in
+								// Invalid username or password
+								// Missing username or password
+								else if(submessageType == 1 ||
+										submessageType == 2 || 
+										submessageType == 3 ){
 									continue;
-								} else if(submessageType == 2){
-									System.out.println("Invalid username or password");
-									continue;
-								} else if(submessageType == 3){
-									System.out.println("Missing username or password");
-									continue;
-								}
+								} 
 							}
 							
 							// Create user
@@ -110,18 +114,17 @@ public class Client {
 								int submessageType = response.getSubmessageType();
 								String data = response.getDataString();
 								System.out.println("\n"+data );
+
+								// Successfully created user
+								// User already exists
+								if(submessageType == 0 || submessageType == 1){
+								} 
 								
-								if(submessageType == 0){
-									System.out.println("Successfully created user");
-								} else if(submessageType == 1){
-									System.out.println("User already exists");
-								} else if(submessageType == 2){
-									System.out.println("User already logged in");
+								// User is already logged in
+								// Badly formatted request
+								else if(submessageType == 2 || submessageType == 3){
 									continue;
-								} else if(submessageType == 3){
-									System.out.println("Badly formatted request");
-									continue;
-								}
+								} 
 								
 								user.login(username, password);
 								
@@ -129,20 +132,21 @@ public class Client {
 								submessageType = response.getSubmessageType();
 								data = response.getDataString();
 								System.out.println("\n"+data);
-								
+
+								// Successfully logged in
 								if(submessageType == 0){
-									System.out.println("Successfully logged in");
 									loggedIn = true;
-								} else if(submessageType == 1){
-									System.out.println("User already logged in");
+								} 
+								
+								// User already logged in
+								// Bad credentials
+								// Badly formatted request
+								else if(submessageType == 1 ||
+										submessageType == 2 || 
+										submessageType == 3 ){
+
 									continue;
-								} else if(submessageType == 2){
-									System.out.println("Bad credentials");
-									continue;
-								} else if(submessageType == 3){
-									System.out.println("Badly formatted request");
-									continue;
-								}
+								} 
 								
 								user.createStore();
 								
@@ -150,13 +154,15 @@ public class Client {
 								submessageType = response.getSubmessageType();
 								data = response.getDataString();
 								System.out.println("\n"+data);
+
 								
-								if(submessageType == 0){
-									System.out.println("Successfully created store");
-								} else if(submessageType == 1){
-									System.out.println("Store already exists");
-								} else if(submessageType == 2){
-									System.out.println("User not logged in");
+								// Successfully created store
+								// Store already exists
+								if(submessageType == 0 || submessageType == 1){
+								} 
+								
+								// User not logged in
+								else if(submessageType == 2){
 									continue;
 								}
 							}
@@ -222,10 +228,8 @@ public class Client {
 				response = user.parseResponse();
 				submessageType = response.getSubmessageType();
 
-				if(submessageType == 0){
-					data = response.getDataString();
-					System.out.println("Response from server: \n" + data);
-				}
+				System.out.println(response.getDataString());
+				
 			} catch(IOException e){
 				e.printStackTrace();
 			}
@@ -247,18 +251,8 @@ public class Client {
 				// Wait for a response from the server
 				response = user.parseResponse();
 				submessageType = response.getSubmessageType();
-				
-				if(submessageType == 0){
-					System.out.println("Message sent successfully!");
-				} else if(submessageType == 1){
-					System.out.println("Destination user does not have a data store created");
-				} else if(submessageType == 2){
-					System.out.println("Destination user does not exist");
-				} else if(submessageType == 3){
-					System.out.println("No users are currently logged in");					
-				} else if(submessageType == 4){
-					System.out.println("Badly formatted message, there are missing fields in the data field");
-				}
+
+				System.out.println(response.getDataString());
 				
 			} catch(IOException e){
 				e.printStackTrace();
@@ -267,47 +261,43 @@ public class Client {
 			break;
 			
 		case "query":
+
+			// Send query command
 			user.queryMessages();
 			
+			// Get server response
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
+			System.out.println(response.getDataString());
 			
-			if(submessageType == 0){
-				System.out.println("You have no outstanding messages in your message store");
-			} else if(submessageType == 1){
-				// TODO: Handle cases when there are multiple outstanding messages
-			}
 			break;
 			
 		case "delete":
+			
+			// Send delete command
 			user.deleteUser();
 			
+			// Get server response
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
+			System.out.println(response.getDataString());
 			
-			if(submessageType == 0){
-				System.out.println("User successfully deleted");
-			} else if(submessageType == 1){
-				System.out.println("You are not currently logged in.  No users have been deleted");
-			}
-			
+			// Send the logoff command and log the user out on the client side
 			user.logoff();
 			loggedIn = false;
 			break;
 			
 		case "logoff":
+			
+			// Send logoff command
 			user.logoff();
 			
+			// Get the response from the server
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
-			if(submessageType == 0){
-				System.out.println("Logout successful!");
-			} else if(submessageType == 1){
-				System.out.println("You are not currently logged in");
-			} else if(submessageType == 2){
-				System.out.println("You have been logged out after 60 seconds due to inactivity");
-			}
-			
+			System.out.println(response.getDataString());
+
+			// Log the user out on the client side
 			user.isLoggedIn = false;
 			loggedIn = false;
 			break;
