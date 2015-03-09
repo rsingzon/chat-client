@@ -24,14 +24,13 @@ import java.util.Arrays;
 
 public class Client { 
 	
-	static int port = 5001;
+	static int port = 5000;
 	static boolean loggedIn = false;
 	
 	static String ip = null;
 	static Socket socket = null;
 	static User user = null;
 	static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-	static DataInputStream input;
 	
 	public static void main(String args[]){		
 
@@ -54,9 +53,13 @@ public class Client {
 						System.out.println("Type \"login\" to log in, or \"create\" to create a new user");
 						option = reader.readLine();
 						
+						if(option.toLowerCase().equals("exit")  || option.toLowerCase().equals("quit")){
+							System.exit(0);
+						}
 						
 						// No valid option selected, prompt user for selection again
-						if( !option.toLowerCase().equals("l") 		&&
+						else if( 
+							!option.toLowerCase().equals("l") 		&&
 							!option.toLowerCase().equals("login") 	&&
 							!option.toLowerCase().equals("c") 		&& 
 							!option.toLowerCase().equals("create") 	){
@@ -79,88 +82,101 @@ public class Client {
 							if(option.toLowerCase().equals("l") || option.toLowerCase().equals("login")){
 								
 								user = new User(username, password, socket);
-								user.login(username, password);
-								
-								Message response = user.parseResponse();
-								int submessageType = response.getSubmessageType();
-								String data = response.getDataString();
-								System.out.println(data);
-																						
-								switch(submessageType){
-								case 0:
-									System.out.println("Logging in..");
-									loggedIn = true;
-									break;
-								case 1:
-									System.out.println("This user is already logged in");
-									break;
-								case 2:
-									System.out.println("Invalid username or password");
-									break;
-								case 3:
-									System.out.println("Missing username or password");
-									break;
-								default:
-									System.out.println("An unknown error occurred");
+
+								// Check if the username is properly formatted
+								if(user.login()){
+									Message response = user.parseResponse();
+									int submessageType = response.getSubmessageType();
+									String data = response.getDataString();
+									System.out.println(data);
+									
+									// Successful login
+									if(submessageType == 0){
+										loggedIn = true;
+										user.isLoggedIn = true;
+									} 
+									
+									// User is already logged in
+									// Invalid username or password
+									// Missing username or password
+									else if(submessageType == 1 ||
+											submessageType == 2 || 
+											submessageType == 3 ){
+										continue;
+									} 
+								}
+								else{
+									continue;
 								}
 							}
 							
 							// Create user
 							else{
 								user = new User(username, password, socket);
-								user.createUser(username, password);
+								if(user.createUser()){
 							
-								Message response = user.parseResponse();
-								int submessageType = response.getSubmessageType();
-								String data = response.getDataString();
-								System.out.println("\n"+data );
-								
-								if(submessageType == 0){
-									System.out.println("Successfully created user");
-								} else if(submessageType == 1){
-									System.out.println("User already exists");
-								} else if(submessageType == 2){
-									System.out.println("User already logged in");
-								} else if(submessageType == 3){
-									System.out.println("Badly formatted request");
+									Message response = user.parseResponse();
+									int submessageType = response.getSubmessageType();
+									String data = response.getDataString();
+									System.out.println("\n"+data );
+									
+									// Successfully created user
+									// User already exists
+									if(submessageType == 0 || submessageType == 1){
+									} 
+									
+									// User is already logged in
+									// Badly formatted request
+									else if(submessageType == 2 || submessageType == 3){
+										continue;
+									} 
+									
+									user.login();
+									
+									response = user.parseResponse();
+									submessageType = response.getSubmessageType();
+									data = response.getDataString();
+									System.out.println("\n"+data);
+									
+									// Successfully logged in
+									if(submessageType == 0){
+										loggedIn = true;
+									} 
+									
+									// User already logged in
+									// Bad credentials
+									// Badly formatted request
+									else if(submessageType == 1 ||
+											submessageType == 2 || 
+											submessageType == 3 ){
+										
+										continue;
+									} 
+									
+									user.createStore();
+									
+									response = user.parseResponse();
+									submessageType = response.getSubmessageType();
+									data = response.getDataString();
+									System.out.println("\n"+data);
+									
+									
+									// Successfully created store
+									// Store already exists
+									if(submessageType == 0 || submessageType == 1){
+									} 
+									
+									// User not logged in
+									else if(submessageType == 2){
+										continue;
+									}
 								}
-								
-								user.login(username, password);
-								
-								response = user.parseResponse();
-								submessageType = response.getSubmessageType();
-								data = response.getDataString();
-								System.out.println("\n"+data);
-								
-								if(submessageType == 0){
-									System.out.println("Successfully logged in");
-									loggedIn = true;
-								} else if(submessageType == 1){
-									System.out.println("User already logged in");
-								} else if(submessageType == 2){
-									System.out.println("Bad credentials");
-								} else if(submessageType == 3){
-									System.out.println("Badly formatted request");
+								else{
+									continue;
 								}
-								
-								user.createStore();
-								
-								response = user.parseResponse();
-								submessageType = response.getSubmessageType();
-								data = response.getDataString();
-								System.out.println("\n"+data);
-								
-								if(submessageType == 0){
-									System.out.println("Successfully created store");
-								} else if(submessageType == 1){
-									System.out.println("Store already exists");
-								} else if(submessageType == 2){
-									System.out.println("User not logged in");
-								} 
 							}
-							
 							QueryThread query = new QueryThread(user);
-							query.run();
+							query.start();
 						}
 					} 
 					
@@ -189,7 +205,6 @@ public class Client {
 					}
 				}
 			}
-			
 		} catch(UnknownHostException e){
 			System.out.println("Unknown host: " + e.getMessage());
 		}
@@ -222,10 +237,8 @@ public class Client {
 				response = user.parseResponse();
 				submessageType = response.getSubmessageType();
 
-				if(submessageType == 0){
-					data = response.getDataString();
-					System.out.println("Response from server: \n" + data);
-				}
+				System.out.println(response.getDataString());
+				
 			} catch(IOException e){
 				e.printStackTrace();
 			}
@@ -247,18 +260,8 @@ public class Client {
 				// Wait for a response from the server
 				response = user.parseResponse();
 				submessageType = response.getSubmessageType();
-				
-				if(submessageType == 0){
-					System.out.println("Message sent successfully!");
-				} else if(submessageType == 1){
-					System.out.println("Destination user does not have a data store created");
-				} else if(submessageType == 2){
-					System.out.println("Destination user does not exist");
-				} else if(submessageType == 3){
-					System.out.println("No users are currently logged in");					
-				} else if(submessageType == 4){
-					System.out.println("Badly formatted message, there are missing fields in the data field");
-				}
+
+				System.out.println(response.getDataString());
 				
 			} catch(IOException e){
 				e.printStackTrace();
@@ -267,45 +270,57 @@ public class Client {
 			break;
 			
 		case "query":
+
+			// Send query command
 			user.queryMessages();
 			
+			// Get server response
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
+			System.out.println(user.formatMessage(response.getDataString()));
 			
-			if(submessageType == 0){
-				System.out.println("You have no outstanding messages in your message store");
-			} else if(submessageType == 1){
-				// TODO: Handle cases when there are multiple outstanding messages
-			}
 			break;
 			
 		case "delete":
+			
+			// Send delete command
 			user.deleteUser();
 			
+			// Get server response
 			response = user.parseResponse();
 			submessageType = response.getSubmessageType();
+			System.out.println(response.getDataString());
 			
-			if(submessageType == 0){
-				System.out.println("User successfully deleted");
-			} else if(submessageType == 1){
-				System.out.println("You are not currently logged in.  No users have been deleted");
-			}
+			// Send the logoff command and log the user out on the client side
+			user.logoff();
+			loggedIn = false;
+			break;
+			
+		case "logoff":
+			
+			// Send logoff command
+			user.logoff();
+			
+			// Get the response from the server
+			response = user.parseResponse();
+			submessageType = response.getSubmessageType();
+			System.out.println(response.getDataString());
+
+			// Log the user out on the client side
+			user.isLoggedIn = false;
+			loggedIn = false;
 			break;
 			
 		case "exit":
 			user.exit();
-			
-			response = user.parseResponse();
-			submessageType = response.getSubmessageType();
-			if(submessageType == 0){
-				System.out.println("Logout successful!");
-			} else if(submessageType == 1){
-				System.out.println("You are not currently logged in");
-			} else if(submessageType == 2){
-				System.out.println("You have been logged out after 60 seconds due to inactivity");
+			try{
+				socket.close();
+			} catch(IOException e){
+				e.printStackTrace();
 			}
+			System.exit(0);
 			
-			loggedIn = false;
+			
 			break;
 			
 		default:
@@ -316,7 +331,8 @@ public class Client {
 				"send : Send a message to an existing user\n"+
 				"query: Retrieve messages that have been sent to the user currently logged in\n"+
 				"delete: Deletes the user that is currently logged in and logs the user out\n"+
-				"exit : Logs off the current user\n");
+				"logoff: Logs the current user out\n"+
+				"exit : Exits the program\n");
 			break;
 		}
 	}

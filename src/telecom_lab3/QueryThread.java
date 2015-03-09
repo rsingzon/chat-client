@@ -18,12 +18,11 @@ public class QueryThread extends Thread {
  
     @Override
     public void run() {
-        boolean isRunning = true;
         ArrayList<Message> newMessages = new ArrayList<Message>();
         Message response;
         int submessageType;
         
-        while (isRunning){
+        while (user.isLoggedIn){
         	try{
         		Thread.sleep(1000);
         
@@ -37,8 +36,7 @@ public class QueryThread extends Thread {
         		
         		// There are messages available
         		else if(submessageType == 1){
-    				System.out.println("Messages available!");
-    				System.out.println(response.getDataString());
+    				System.out.println(user.formatMessage(response.getDataString()));
     			}
         		
         	} catch(InterruptedException e){

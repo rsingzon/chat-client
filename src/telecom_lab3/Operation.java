@@ -1,3 +1,7 @@
+/**
+ * Enumeration for all the operations available to the client
+ */
+
 package telecom_lab3;
 
 public enum Operation {
