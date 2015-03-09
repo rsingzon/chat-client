@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 public class Client { 
 	
-	static int port = 5001;
+	static int port = 5000;
 	static boolean loggedIn = false;
 	
 	static String ip = null;
@@ -132,8 +132,6 @@ public class Client {
 								if(submessageType == 0){
 									System.out.println("Successfully logged in");
 									loggedIn = true;
-									QueryThread query = new QueryThread(user);
-									query.run();
 								} else if(submessageType == 1){
 									System.out.println("User already logged in");
 									continue;
@@ -158,8 +156,11 @@ public class Client {
 									System.out.println("Store already exists");
 								} else if(submessageType == 2){
 									System.out.println("User not logged in");
+									continue;
 								}
 							}
+							QueryThread query = new QueryThread(user);
+							query.start();
 						}
 					} 
 					
