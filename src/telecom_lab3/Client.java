@@ -82,87 +82,96 @@ public class Client {
 							if(option.toLowerCase().equals("l") || option.toLowerCase().equals("login")){
 								
 								user = new User(username, password, socket);
-								user.login();
-								
-								Message response = user.parseResponse();
-								int submessageType = response.getSubmessageType();
-								String data = response.getDataString();
-								System.out.println(data);
 
-								// Successful login
-								if(submessageType == 0){
-									loggedIn = true;
-									user.isLoggedIn = true;
-								} 
-								
-								// User is already logged in
-								// Invalid username or password
-								// Missing username or password
-								else if(submessageType == 1 ||
-										submessageType == 2 || 
-										submessageType == 3 ){
+								// Check if the username is properly formatted
+								if(user.login()){
+									Message response = user.parseResponse();
+									int submessageType = response.getSubmessageType();
+									String data = response.getDataString();
+									System.out.println(data);
+									
+									// Successful login
+									if(submessageType == 0){
+										loggedIn = true;
+										user.isLoggedIn = true;
+									} 
+									
+									// User is already logged in
+									// Invalid username or password
+									// Missing username or password
+									else if(submessageType == 1 ||
+											submessageType == 2 || 
+											submessageType == 3 ){
+										continue;
+									} 
+								}
+								else{
 									continue;
-								} 
+								}
 							}
 							
 							// Create user
 							else{
 								user = new User(username, password, socket);
-								user.createUser();
+								if(user.createUser()){
 							
-								Message response = user.parseResponse();
-								int submessageType = response.getSubmessageType();
-								String data = response.getDataString();
-								System.out.println("\n"+data );
-
-								// Successfully created user
-								// User already exists
-								if(submessageType == 0 || submessageType == 1){
-								} 
-								
-								// User is already logged in
-								// Badly formatted request
-								else if(submessageType == 2 || submessageType == 3){
-									continue;
-								} 
-								
-								user.login();
-								
-								response = user.parseResponse();
-								submessageType = response.getSubmessageType();
-								data = response.getDataString();
-								System.out.println("\n"+data);
-
-								// Successfully logged in
-								if(submessageType == 0){
-									loggedIn = true;
-								} 
-								
-								// User already logged in
-								// Bad credentials
-								// Badly formatted request
-								else if(submessageType == 1 ||
-										submessageType == 2 || 
-										submessageType == 3 ){
-
-									continue;
-								} 
-								
-								user.createStore();
-								
-								response = user.parseResponse();
-								submessageType = response.getSubmessageType();
-								data = response.getDataString();
-								System.out.println("\n"+data);
-
-								
-								// Successfully created store
-								// Store already exists
-								if(submessageType == 0 || submessageType == 1){
-								} 
-								
-								// User not logged in
-								else if(submessageType == 2){
+									Message response = user.parseResponse();
+									int submessageType = response.getSubmessageType();
+									String data = response.getDataString();
+									System.out.println("\n"+data );
+									
+									// Successfully created user
+									// User already exists
+									if(submessageType == 0 || submessageType == 1){
+									} 
+									
+									// User is already logged in
+									// Badly formatted request
+									else if(submessageType == 2 || submessageType == 3){
+										continue;
+									} 
+									
+									user.login();
+									
+									response = user.parseResponse();
+									submessageType = response.getSubmessageType();
+									data = response.getDataString();
+									System.out.println("\n"+data);
+									
+									// Successfully logged in
+									if(submessageType == 0){
+										loggedIn = true;
+									} 
+									
+									// User already logged in
+									// Bad credentials
+									// Badly formatted request
+									else if(submessageType == 1 ||
+											submessageType == 2 || 
+											submessageType == 3 ){
+										
+										continue;
+									} 
+									
+									user.createStore();
+									
+									response = user.parseResponse();
+									submessageType = response.getSubmessageType();
+									data = response.getDataString();
+									System.out.println("\n"+data);
+									
+									
+									// Successfully created store
+									// Store already exists
+									if(submessageType == 0 || submessageType == 1){
+									} 
+									
+									// User not logged in
+									else if(submessageType == 2){
+										continue;
+									}
+								}
+								else{
 									continue;
 								}
 							}

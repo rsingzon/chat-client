@@ -70,13 +70,22 @@ public class User {
 	 * Logs a user in
 	 * @param username
 	 * @param password
+	 * @return boolean indicating whether the username is valid and the login command was sent to the server
 	 */
-	public void login() {
+	public boolean login() {
+		
+		// Check that the username is valid (ie. there are no commas)
+		if(username.contains(",")){
+			System.out.println("Badly formatted username");
+			return false;
+		}
+		
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
 
 		Message message = new Message(Operation.getValue(Operation.LOGIN), 0, dataSize, data);
 		sendMessage(message);
+		return true;
 	}
 	
 	/**
@@ -91,13 +100,22 @@ public class User {
 	 * Creates a new user
 	 * @param username
 	 * @param password
+	 * @return boolean indicating whether the username is valid and the create command was sent to the server
 	 */
-	public void createUser() {
+	public boolean createUser() {
+		
+		// Check if the username contains commas
+		if(username.contains(",")){
+			System.out.println("Badly formatted username");
+			return false;
+		}
+		
 		String data = username + "," + password;
 		int dataSize = data.getBytes().length;
 		
 		Message message = new Message(Operation.getValue(Operation.CREATE_USER), 0, dataSize, data);
 		sendMessage(message);
+		return true;
 	}
 	
 	/**
