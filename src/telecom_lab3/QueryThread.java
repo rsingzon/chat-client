@@ -19,20 +19,23 @@ public class QueryThread extends Thread {
     @Override
     public void run() {
         ArrayList<Message> newMessages = new ArrayList<Message>();
-        Message response;
         int submessageType;
         
         while (user.isLoggedIn){
         	try{
+        		
+        		// Wait 1 second between querying the server
         		Thread.sleep(1000);
         
+        		// Query for messages and parse the response
         		user.queryMessages();
-        		response = user.parseResponse();
-
-        		// Continue retrieving messages until there are no more
-        		while(response.getSubmessageType() != 0){
-        			response = user.parseResponse();
-        			System.out.println(user.formatMessage(response.getDataString()));
+        		newMessages = user.parseQuery();
+        		
+        		// Iterate through all the received messages and print them
+        		for(Message message : newMessages){
+        			if(message.getSubmessageType() == 1){
+        				System.out.println(message.getDataString());
+        			}
         		}
         	} catch(InterruptedException e){
         		System.out.println("Query messages interrupted. " + e.getMessage());

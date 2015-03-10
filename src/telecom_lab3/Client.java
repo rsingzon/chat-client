@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 public class Client { 
 	
-	static int port = 5000;
+	static int port = 5004;
 	static boolean loggedIn = false;
 	
 	static String ip = null;

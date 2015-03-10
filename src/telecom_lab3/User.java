@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class User {
@@ -168,8 +169,16 @@ public class User {
 	 */
 	public String formatMessage(String message){
 		//Split the message into three parts, the sender, timestamp, and message string
-		String parts[] = message.split(",", 3);
-		return "[" + parts[1] + "] " + parts[0] + " >> " + username + ": " + parts[2];
+		try{
+			String parts[] = message.split(",", 3);
+			String sentMessage = "[" + parts[1] + "] " + parts[0] + " >> " + username + ": " + parts[2]; 
+			return sentMessage;
+			
+		} catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Invalid message entered");
+			e.printStackTrace();
+		}
+		return "";
 	}
 	
 	/**
@@ -203,12 +212,60 @@ public class User {
 			byte[] dataBytes = Arrays.copyOfRange(readBuf, 12, 12 + dataSize);
 			String data = new String(dataBytes);
 			
-//			System.out.println("Response: ");
-//			System.out.println("Type: "+ messageType);
-//			System.out.println("Submessage: "+submessageType);
-//			System.out.println("Size: "+dataSize);
-//			System.out.println("Data: "+data);
 			return new Message(messageType, submessageType, dataSize, data);
+			
+		} catch (IOException e){
+			System.out.println("IO Exception on parsing server response: " + e.getMessage());
+		}
+
+		return null;
+	}
+	
+	/**
+	 * Parses the response from querying for new messages on the server
+	 * @return ArrayList of Messages
+	 */
+	public ArrayList<Message> parseQuery(){
+
+		byte[] readBuf = new byte[1000];
+		int bytesReceived = 0;
+		int bytes = 0;
+		int startByte = 0;
+		
+		ArrayList<Message> messages = new ArrayList<Message>();
+
+		try{
+			// Wait for login success message from server
+			DataInputStream input = new DataInputStream(socket.getInputStream());
+
+			// Copy bytes into buffer
+			bytes = input.read(readBuf);
+			
+			// Loop through the saved messages
+			while(startByte < bytes){
+				
+				//  Extract the fields from the byte array
+				byte[] typeBytes = Arrays.copyOfRange(readBuf, startByte, startByte+4);
+				byte[] submessageTypeBytes = Arrays.copyOfRange(readBuf, startByte+4, startByte+8);
+				byte[] sizeBytes = Arrays.copyOfRange(readBuf, startByte+8, startByte+12);
+				
+				// Convert the byte arrays into integers
+				int messageType = ByteBuffer.wrap(typeBytes).getInt();
+				int submessageType = ByteBuffer.wrap(submessageTypeBytes).getInt();
+				int dataSize = ByteBuffer.wrap(sizeBytes).getInt();
+				
+				// Convert the data byte array into a String
+				byte[] dataBytes = Arrays.copyOfRange(readBuf, startByte+12, startByte+12+dataSize);
+				String data = new String(dataBytes);
+				
+				// Create a new message containing the fields of that message
+				messages.add(new Message(messageType, submessageType, dataSize, data));
+				
+				// Increase the start byte to the start of the next message
+				startByte = startByte+12+dataSize;
+			}
+			
+			return messages;
 			
 		} catch (IOException e){
 			System.out.println("IO Exception on parsing server response: " + e.getMessage());
