@@ -33,7 +33,7 @@ public class QueryThread extends Thread {
         		// Iterate through all the received messages and print them
         		for(Message message : newMessages){
         			if(message.getSubmessageType() == 1){
-        				System.out.println(message.getDataString());
+        				System.out.println(user.formatMessage(message.getDataString()));
         			}
         		}
         	} catch(InterruptedException e){

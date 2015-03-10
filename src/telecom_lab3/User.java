@@ -172,8 +172,7 @@ public class User {
 			return sentMessage;
 			
 		} catch(ArrayIndexOutOfBoundsException e){
-			System.out.println("Invalid message entered");
-			e.printStackTrace();
+			//System.out.println("Invalid message entered");
 		}
 		return "";
 	}
