@@ -56,6 +56,23 @@ public class ClientTest extends TestCase {
 		assertEquals("User already logged in", 2, message.getSubmessageType());
 		socket.close();
 	
+	}
+	
+	public void testbadform() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		User user = new User("kee,rtana", "murali", socket);
+		user.createUser();
+		
+		
+		Message message = user.parseResponse();
+		assertEquals("User exists", 3, message.getSubmessageType());
+		socket.close();
 
 	}
 	
@@ -78,6 +95,7 @@ public class ClientTest extends TestCase {
 		
 	}
 	
+//STORE
 	public void teststorenotloggedin() throws Exception {
 		try {
 			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
@@ -94,7 +112,106 @@ public class ClientTest extends TestCase {
 		Message message = user.parseResponse();
 		assertEquals("User not logged in", 2, message.getSubmessageType());
 		socket.close();
-		
 
 	}
+	
+	public void teststorealreadyexists() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","singzon",socket);
+		user.login();
+		user.createStore();
+		user.createStore();
+		Message message = user.parseResponse();
+		assertEquals("Store already exists", 1, message.getSubmessageType());
+		socket.close();
+		
+	}
+	
+	//LOGIN
+	public void testloggedin() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","singzon",socket);
+		user.login();
+		user.login();
+		Message message = user.parseResponse();
+		assertEquals("User already logged in", 1, message.getSubmessageType());
+		socket.close();
+	}
+	
+	public void testbadcreds() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","ryan",socket);
+		user.login();
+		Message message = user.parseResponse();
+		assertEquals("Bad credentials", 2, message.getSubmessageType());
+		socket.close();
+	}
+	
+	public void testbadlyformatted() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","",socket);
+		user.login();
+		user.login();
+		Message message = user.parseResponse();
+		assertEquals("User already logged in", 3, message.getSubmessageType());
+		socket.close();
+	}
+	
+	//LOGOFF
+	public void testlogoff() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","singzon",socket);
+		user.login();
+		user.login();
+		Message message = user.parseResponse();
+		assertEquals("User already logged in", 1, message.getSubmessageType());
+		socket.close();
+	}
+	
+	
 }
