@@ -6,11 +6,8 @@ package telecom_lab3;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,16 +185,13 @@ public class User {
 	public Message parseResponse(){
 
 		byte[] readBuf = new byte[1000];
-		int bytesReceived = 0;
-		int bytes = 0;
-
 		
 		try{
 			// Wait for login success message from server
 			DataInputStream input = new DataInputStream(socket.getInputStream());
 
 			// Copy bytes into buffer
-			bytes = input.read(readBuf);
+			input.read(readBuf);
 			
 			// Extract the response from the byte array
 			// Extract the message from the byte array
@@ -228,7 +222,6 @@ public class User {
 	public ArrayList<Message> parseQuery(){
 
 		byte[] readBuf = new byte[1000];
-		int bytesReceived = 0;
 		int bytes = 0;
 		int startByte = 0;
 		

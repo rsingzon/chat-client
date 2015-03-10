@@ -19,7 +19,6 @@ public class QueryThread extends Thread {
     @Override
     public void run() {
         ArrayList<Message> newMessages = new ArrayList<Message>();
-        int submessageType;
         
         while (user.isLoggedIn){
         	try{

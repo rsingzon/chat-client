@@ -10,17 +10,12 @@
 package telecom_lab3;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.EOFException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class Client { 
 	
@@ -226,8 +221,6 @@ public class Client {
 		
 		String commandLowercase = command.toLowerCase();
 		Message response;
-		int submessageType;
-		String data;
 		
 		switch(commandLowercase){
 	
@@ -242,8 +235,6 @@ public class Client {
 				
 				// Wait for the response from the server
 				response = user.parseResponse();
-				submessageType = response.getSubmessageType();
-
 				System.out.println(response.getDataString());
 				
 			} catch(IOException e){
@@ -266,8 +257,6 @@ public class Client {
 				
 				// Wait for a response from the server
 				response = user.parseResponse();
-				submessageType = response.getSubmessageType();
-
 				System.out.println(response.getDataString());
 				
 			} catch(IOException e){
@@ -283,7 +272,6 @@ public class Client {
 			
 			// Get server response
 			response = user.parseResponse();
-			submessageType = response.getSubmessageType();
 			System.out.println(user.formatMessage(response.getDataString()));
 			
 			break;
@@ -295,7 +283,6 @@ public class Client {
 			
 			// Get server response
 			response = user.parseResponse();
-			submessageType = response.getSubmessageType();
 			System.out.println(response.getDataString());
 			
 			// Send the logoff command and log the user out on the client side
@@ -310,7 +297,6 @@ public class Client {
 			
 			// Get the response from the server
 			response = user.parseResponse();
-			submessageType = response.getSubmessageType();
 			System.out.println(response.getDataString());
 
 			// Log the user out on the client side
