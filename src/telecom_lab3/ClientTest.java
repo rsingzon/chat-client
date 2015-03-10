@@ -18,6 +18,7 @@ public class ClientTest extends TestCase {
 	String ip; 
 	int port = 5001;
 
+	//CREATE USER
 	public void testUserExists() throws Exception {
 		try {
 			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
@@ -31,7 +32,7 @@ public class ClientTest extends TestCase {
 		// assuming ryan already exists
 		
 		Message message = user.parseResponse();
-		assertEquals("User exists", 1, message.getSubmessageType());
+		assertEquals("User already exists", 1, message.getSubmessageType());
 		socket.close();
 
 	}
@@ -49,33 +50,31 @@ public class ClientTest extends TestCase {
 		
 		User user= new User("ryan","singzon",socket);
 		user.login();
-		User user1 = new User("keertana", "murali", socket);
-		user.createUser();
-		user.parseResponse();
-		Message message = user.parseResponse();
+		User user2 = new User("boo", "baa", socket);
+		user2.createUser();
+		Message message = user2.parseResponse();
 		assertEquals("User already logged in", 2, message.getSubmessageType());
 		socket.close();
 	
 	}
 	
-	public void testbadform() throws Exception {
-		try {
-			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
-			ip = address.getHostAddress();
-		} catch (UnknownHostException e) {
-			System.out.println("Unknown host: " + e.getMessage());
-		}
-		Socket socket = new Socket(ip, port);
-		User user = new User("kee,rtana", "murali", socket);
-		user.createUser();
-		
-		
-		Message message = user.parseResponse();
-		assertEquals("User exists", 3, message.getSubmessageType());
-		socket.close();
-
-	}
+//	public void testbadform() throws Exception {
+//		try {
+//			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+//			ip = address.getHostAddress();
+//		} catch (UnknownHostException e) {
+//			System.out.println("Unknown host: " + e.getMessage());
+//		}
+//		Socket socket = new Socket(ip, port);
+//		User user = new User("kee,rtana", "murali", socket);
+//		user.createUser();
+//		Message message = user.parseResponse();
+//		assertEquals("Badly formatted username or password", 3, message.getSubmessageType());
+//		socket.close();
+//
+//	}
 	
+	//DELETE
 	public void testdelete() throws Exception {
 		try {
 			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
@@ -150,8 +149,10 @@ public class ClientTest extends TestCase {
 		
 		User user= new User("ryan","singzon",socket);
 		user.login();
-		user.login();
-		Message message = user.parseResponse();
+		User user1= new User("r","gosling",socket);
+		user1.createUser();
+		user1.login();
+		Message message = user1.parseResponse();
 		assertEquals("User already logged in", 1, message.getSubmessageType());
 		socket.close();
 	}
@@ -167,10 +168,10 @@ public class ClientTest extends TestCase {
 		
 		// assuming ryan already exists
 		
-		User user= new User("ryan","ryan",socket);
+		User user= new User("hello","hello",socket);
 		user.login();
 		Message message = user.parseResponse();
-		assertEquals("Bad credentials", 2, message.getSubmessageType());
+		assertEquals("Bad credentials: check username passord combinations", 2, message.getSubmessageType());
 		socket.close();
 	}
 	
@@ -187,9 +188,8 @@ public class ClientTest extends TestCase {
 		
 		User user= new User("ryan","",socket);
 		user.login();
-		user.login();
 		Message message = user.parseResponse();
-		assertEquals("User already logged in", 3, message.getSubmessageType());
+		assertEquals("username/ password missing", 3, message.getSubmessageType());
 		socket.close();
 	}
 	
@@ -206,8 +206,8 @@ public class ClientTest extends TestCase {
 		// assuming ryan already exists
 		
 		User user= new User("ryan","singzon",socket);
-		user.login();
-		user.login();
+		user.logoff();
+		
 		Message message = user.parseResponse();
 		assertEquals("User already logged in", 1, message.getSubmessageType());
 		socket.close();
