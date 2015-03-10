@@ -37,26 +37,28 @@ public class ClientTest extends TestCase {
 
 	}
 	
-	public void testUserAlreadyLoggedIn() throws Exception {
-		try {
-			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
-			ip = address.getHostAddress();
-		} catch (UnknownHostException e) {
-			System.out.println("Unknown host: " + e.getMessage());
-		}
-		Socket socket = new Socket(ip, port);
-		
-		// assuming ryan already exists
-		
-		User user= new User("ryan","singzon",socket);
-		user.login();
-		User user2 = new User("boo", "baa", socket);
-		user2.createUser();
-		Message message = user2.parseResponse();
-		assertEquals("User already logged in", 2, message.getSubmessageType());
-		socket.close();
-	
-	}
+//	unable to test this case
+//	public void testUserAlreadyLoggedIn() throws Exception {
+//		try {
+//			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+//			ip = address.getHostAddress();
+//		} catch (UnknownHostException e) {
+//			System.out.println("Unknown host: " + e.getMessage());
+//		}
+//		Socket socket = new Socket(ip, port);
+//		
+//		// assuming ryan already exists
+//		
+//		User user= new User("ryan","singzon",socket);
+//		user.login();
+//		User user2 = new User("boo", "baa", socket);
+//		user2.createUser();
+//		Message message = user2.parseResponse();
+//		assertEquals("User already logged in", 2, message.getSubmessageType());
+//		socket.close();
+//	
+//	}
+//already being tested for
 	
 //	public void testbadform() throws Exception {
 //		try {
@@ -213,5 +215,69 @@ public class ClientTest extends TestCase {
 		socket.close();
 	}
 	
+	//SEND MESSAGE TO USER
+	//not necessary as code never allows for it
+	
+//	public void testuser1() throws Exception {
+//		try {
+//			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+//			ip = address.getHostAddress();
+//		} catch (UnknownHostException e) {
+//			System.out.println("Unknown host: " + e.getMessage());
+//		}
+//		Socket socket = new Socket(ip, port);
+//		
+//		// assuming ryan already exists
+//		
+//		User user= new User("ryan","singzon",socket);
+//		user.login();
+//		Message message = user.parseResponse();
+//		user.sendMessageToUser("brian", "hello");		
+//		message = user.parseResponse();
+//		assertEquals("User you are sending to did not create a data store ", 1, message.getSubmessageType());
+//		socket.close();
+//	}
+	
+	
+	public void testuser2() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","singzon",socket);
+		user.login();
+		Message message = user.parseResponse();
+		user.sendMessageToUser("blairwaldorffffff", "hello");		
+		message = user.parseResponse();
+		assertEquals("User you are sending to does not exist", 2, message.getSubmessageType());
+		socket.close();
+	}
+	
+	public void testuser() throws Exception {
+		try {
+			address = InetAddress.getByName("ecse-489.ece.mcgill.ca");
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.out.println("Unknown host: " + e.getMessage());
+		}
+		Socket socket = new Socket(ip, port);
+		
+		// assuming ryan already exists
+		
+		User user= new User("ryan","singzon",socket);
+		user.sendMessageToUser("k", "hello");		
+		Message message = user.parseResponse();
+		assertEquals("User not logged in", 3, message.getSubmessageType());
+		socket.close();
+	}
+	
+	
+
 	
 }
